@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <title>Chat App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.js"
+            integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'styles/index.css' %}">
+    {% block header %}
+
+    {% endblock header %}
+</head>
+<body>
+
+<header class="main-head">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand">
+                Jobsity Chat
+            </a>
+            {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <button type="button" class="btn btn-secondary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.username }}
+                        <img src="{% static 'img/user.png' %}" height="20" width="20" alt="">
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<div class="main">
+    <div class="container">
+        {% block content %}
+
+        {% endblock content %}
+    </div>
+</div>
+
+<script>
+
+</script>
+</body>
+</html>

@@ -1,2 +1,2 @@
 # jobsity_chat
-Basic chat, and bot
+Chat implemented with Django, and a bot that connect to the app with WebSockets. 

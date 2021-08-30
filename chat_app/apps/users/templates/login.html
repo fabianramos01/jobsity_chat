@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'styles/login.css' %}">
+{% endblock header %}
+
+{% block content %}
+    <div class="container">
+        {% if form.errors %}
+            {% for key, value in form.errors.items %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>{{ key }}, {{ value }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <form method="POST" class="box">
+                        {% csrf_token %}
+                        <h1>Login</h1>
+                        <p class="text-muted"> Please enter your username and password!</p>
+                        <input type="text" name="{{ form.username.name }}"
+                               placeholder="{{ form.username.label }}" required>
+                        <input type="password" name="{{ form.password.name }}" placeholder="{{ form.password.label }}"
+                               required>
+                        <a class="forgot text-muted" href="/register">Register</a>
+                        <input type="submit" name="" value="Submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

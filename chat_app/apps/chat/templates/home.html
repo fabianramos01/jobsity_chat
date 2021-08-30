@@ -1,0 +1,154 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'styles/home.css' %}">
+{% endblock header %}
+
+{% block content %}
+    <br>
+    <div class="container" style="height: 100%">
+        <!-- Content wrapper start -->
+        <div class="content-wrapper">
+
+            <!-- Row start -->
+            <div class="row">
+
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+
+                    <div class="card m-0">
+
+                        <!-- Row start -->
+                        <div class="row no-gutters">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-3 col-3">
+                                <div class="users-container">
+                                    <div class="container">
+                                        <h3>Rooms</h3>
+                                    </div>
+                                    <hr>
+                                    <ul class="users" style="height: 600px; overflow-x: hidden; overflow-y: auto;">
+                                        {% for i in rooms %}
+                                            <a href="/chat/{{ i.name }}" style="text-decoration: none; color: inherit">
+                                                <li class="person" data-chat="person1">
+                                                    <div class="user">
+                                                        <img src="{% static 'img/chat.png' %}" height="20" width="20"
+                                                             alt="">
+                                                    </div>
+                                                    <p class="name-time">
+                                                        <span class="name">{{ i.name }}</span>
+                                                        <span class="time">{{ i.owner }}</span>
+                                                    </p>
+                                                </li>
+                                            </a>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
+                                <div class="selected-user" style="background: black">
+                                    <span style="color: white">Chat name: <span
+                                            class="name">{{ room_name }}</span></span>
+                                </div>
+                                <div class="chat-container" style="position: relative">
+                                    <div id="scroll-list" class="container"
+                                         style="height: 500px; overflow-x: hidden; overflow-y: auto;">
+                                        <ul id="message-list" class="chat-box chatContainerScroll">
+                                            {% if messages %}
+                                                {% for message in messages %}
+                                                    {% if message.owner != user.username %}
+                                                        <li class="chat-left">
+                                                            <div class="chat-avatar">
+                                                                <img src="{% static 'img/user.png' %}" height="5"
+                                                                     width="5"
+                                                                     alt="">
+                                                                <div class="chat-name">
+                                                                    <strong>{{ message.owner }}</strong>
+                                                                </div>
+                                                            </div>
+                                                            <div class="chat-text">{{ message.content }}
+                                                            </div>
+                                                            <div class="chat-hour">{{ message.timestamp }}<span
+                                                                    class="fa fa-check-circle"></span></div>
+                                                        </li>
+                                                    {% else %}
+                                                        <li class="chat-right">
+                                                            <div class="chat-hour">{{ message.timestamp }}<span
+                                                                    class="fa fa-check-circle"></span></div>
+                                                            <div class="chat-text">{{ message.content }}
+                                                            </div>
+                                                        </li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    <br>
+                                    <div class="input-group mb-3">
+                                        <textarea id="chat-input" class="form-control" rows="3"
+                                                  placeholder="Type your message here..."></textarea>
+                                        <button type="button" class="btn"
+                                                style="background: gray"
+                                                id="chat-submit"
+                                                value="send">
+                                            <img src="{% static 'img/right-arrow.png' %}" alt="">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <script>
+        const roomName = '{{ room_name }}';
+        const messageInput = document.querySelector('#chat-input');
+        const messagesDiv = document.getElementById('scroll-list');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        const socket = new WebSocket(
+            'ws://' + window.location.host + '/chat/' + roomName + '/'
+        );
+
+        socket.onmessage = (e => {
+            const data = JSON.parse(e.data);
+            let messageContent = '';
+            if (data['owner'] !== '{{ user.username }}') {
+                messageContent = "<li class='chat-left'><div class='chat-avatar'> <img src='{% static 'img/user.png' %}'' height='5' width=5' alt=''> <div class='chat-name'><strong>" + data['owner'] + "</strong> </div> </div> <div class='chat-text'>" + data['message'] + " </div> <div class='chat-hour'>" + data['timestamp'] + "<span class='fa fa-check-circle'></span></div> </li>";
+            } else {
+                messageContent = "<li class='chat-right'><div class='chat-hour'>" + data['timestamp'] + "<span class='fa fa-check-circle'></span></div> <div class='chat-text'>" + data['message'] + " </div> </li>";
+            }
+            const target = document.getElementById('message-list');
+            target.innerHTML += messageContent;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+
+        socket.onclose = (e => {
+            console.error('Chat socket closed unexpectedly')
+        });
+
+        document.querySelector('#chat-input').focus();
+        document.querySelector('#chat-input').onkeyup = (e => {
+            if (e.keyCode === 13) {
+                document.querySelector('#chat-submit').click();
+            }
+        });
+
+        document.querySelector('#chat-submit').onclick = (e => {
+            const message = messageInput.value;
+            if (message !== '' && message !== '\n') {
+                socket.send(JSON.stringify({
+                    'message': message,
+                    'owner': '{{ user.username }}'
+                }));
+                messageInput.value = '';
+            }
+        });
+    </script>
+{% endblock %}
