@@ -9,6 +9,14 @@
 {% block content %}
     <br>
     <div class="container" style="height: 100%">
+        {% if form.errors %}
+            {% for key, value in form.errors.items %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>{{ key }}, {{ value }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
         <!-- Content wrapper start -->
         <div class="content-wrapper">
 
@@ -23,8 +31,51 @@
                         <div class="row no-gutters">
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-3 col-3">
                                 <div class="users-container">
-                                    <div class="container">
-                                        <h3>Rooms</h3>
+                                    <div class="container row d-flex">
+                                        <div class="col-md-10 col-sm-10 col-12">
+                                            <h3>Rooms</h3>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2 col-12">
+                                            <button type="button" class="btn btn-dark" data-bs-toggle="modal"
+                                                    data-bs-target="#formModal">
+                                                <img src="{% static 'img/plus.png' %}" height="30" width="30" alt="">
+                                            </button>
+                                        </div>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="formModal" tabindex="-1"
+                                             aria-labelledby="formModallLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form method="POST" class="box">
+                                                        {% csrf_token %}
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="formModallLabel">Create
+                                                                room</h5>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control"
+                                                                       id="{{ form.name.name }}"
+                                                                       name="{{ form.name.name }}">
+                                                                <label for="{{ form.name.name }}">Room name</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Close
+                                                            </button>
+                                                            <input class="btn btn-primary" type="submit" name=""
+                                                                   value="Submit">
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <hr>
                                     <ul class="users" style="height: 600px; overflow-x: hidden; overflow-y: auto;">
